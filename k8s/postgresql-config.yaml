@@ -1,0 +1,17 @@
+auth:
+  enablePostgresUser: true
+  postgresPassword: postgres
+  username: postgres
+  password: postgres
+primary:
+  persistence:
+    enabled: true
+  initdb:
+    user: postgres
+    password: postgres
+    scripts:
+      init.sql: |
+        CREATE DATABASE transaction;
+        GRANT ALL PRIVILEGES ON DATABASE transaction TO postgres;
+volumePermissions:
+  enabled: true

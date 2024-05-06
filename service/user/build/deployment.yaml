@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    name: user
+    app: user
+    namespace: default
+  name: user
+  namespace: default
+spec:
+  strategy:
+    type: RollingUpdate
+  progressDeadlineSeconds: 300
+  selector:
+    matchLabels:
+      app: user
+  template:
+    metadata:
+      labels:
+        name: user
+        app: user
+        namespace: default
+        sidecar.istio.io/inject: "true"
+    spec:
+      containers:
+        - image: docker.io/istio-poc/user
+          imagePullPolicy: IfNotPresent
+          name: user
+          ports:
+            - name: http
+              containerPort: 8000
+          readinessProbe:
+            httpGet:
+              port: http
+              path: /health
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              port: http
+              path: /health
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          startupProbe:
+            httpGet:
+              port: http
+              path: /health
+            failureThreshold: 30
+            periodSeconds: 5
+          resources:
+            limits:
+              cpu: 300m
+              memory: 300Mi
+            requests:
+              cpu: 300m
+              memory: 300Mi
+          env:
+            - name: APPNAME
+              value: user
+            - name: UPSTREAMS
+              value: 
