@@ -23,7 +23,7 @@ spec:
         sidecar.istio.io/inject: "istiosidecarval"
     spec:
       containers:
-        - image: docker.io/istio-poc/appname
+        - image: docker.io/kubernetes-poc/appname
           imagePullPolicy: IfNotPresent
           name: appname
           ports:
