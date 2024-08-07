@@ -1,5 +1,9 @@
 # Proof of Concept Kubernetes Deployment
 This repository is supposed to contains any code that is necessary to do proof of concept of deployment on Kubernetes platform.
+Here are some components involved in this project:
+- Minikube: tool to deploy a Kubernetes cluster in the local environment
+- Istio: kubernetes resource to handle traffic management
+- Kiali: console to visualize, configure, and troubleshoot Istio
 
 ## How to Operate
 All the functionalities this repository has are delivered by the `Makefile`.

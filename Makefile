@@ -61,5 +61,5 @@ build-all-service:
 	@make -C ./service/external build-kubernetes istiosidecar="false"
 
 .PHONY: setup-kubernetes
-setup-kubernetes:
+setup-kubernetes: install-istio install-postgres
 	@minikube start -p poc --driver=docker
