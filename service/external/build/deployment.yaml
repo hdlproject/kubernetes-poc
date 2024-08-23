@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    name: external
+    app: external
+    namespace: default
+  name: external
+  namespace: default
+spec:
+  strategy:
+    type: RollingUpdate
+  progressDeadlineSeconds: 300
+  selector:
+    matchLabels:
+      app: external
+  template:
+    metadata:
+      labels:
+        name: external
+        app: external
+        namespace: default
+        sidecar.istio.io/inject: "false"
+    spec:
+      containers:
+        - image: docker.io/kubernetes-poc/external
+          imagePullPolicy: IfNotPresent
+          name: external
+          ports:
+            - name: http
+              containerPort: 8000
+          readinessProbe:
+            httpGet:
+              port: http
+              path: /health
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              port: http
+              path: /health
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          startupProbe:
+            httpGet:
+              port: http
+              path: /health
+            failureThreshold: 30
+            periodSeconds: 5
+          resources:
+            limits:
+              cpu: 300m
+              memory: 300Mi
+            requests:
+              cpu: 300m
+              memory: 300Mi
+          env:
+            - name: APPNAME
+              value: external
+            - name: UPSTREAMS
+              value: 
