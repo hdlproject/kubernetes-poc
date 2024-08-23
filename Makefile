@@ -53,12 +53,46 @@ install-istio:
 	@kubectl apply -f ./k8s/kiali.yaml
 	@kubectl apply -f ./k8s/prometheus.yaml
 
+.PHONY: install-argocd
+install-argocd:
+	# install argocd
+ifeq (1,$(shell kubectl get namespace argocd >/dev/null 2>&1; echo $$?))
+	@kubectl create namespace argocd
+endif
+	@kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+	@kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}'
+
+	# provision istio as the ingress gateway
+	@curl -kLs -o ./k8s/istio-argocd/install.yaml https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+	@kubectl apply -k ./k8s/istio-argocd -n argocd --wait=true
+	@kubectl apply -f ./k8s/istio-argocd.yaml -n argocd
+
+	# install client
+	@brew install argocd
+
+.PHONY: setup-argocd-client
+setup-argocd-client:
+	# print admin password
+	@echo "admin username: admin - password:" $(shell kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d)
+	@yes | argocd login localhost:8888 --username admin --password $(shell kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d)
+
+.PHONY: build-argocd
+build-argocd:
+	@kubectl config set-context --current --namespace=argocd && \
+		argocd app create --upsert $(APP_NAME) --repo https://github.com/hdlproject/kubernetes-poc.git --path service/$(APP_NAME)/build --dest-server https://kubernetes.default.svc --dest-namespace default && \
+		argocd app sync $(APP_NAME)
+
 .PHONY: build-all-service
-build-all-service:
+build-all-service: setup-argocd-client
 	@make -C ./service/gateway build-kubernetes istiosidecar="true"
 	@make -C ./service/transaction build-kubernetes istiosidecar="true"
 	@make -C ./service/user build-kubernetes istiosidecar="true"
 	@make -C ./service/external build-kubernetes istiosidecar="false"
+
+	@make -C ./service/gateway build-argocd
+	@make -C ./service/transaction build-argocd
+	@make -C ./service/user build-argocd
+	@make -C ./service/external build-argocd
 
 .PHONY: setup-kubernetes
 setup-kubernetes: install-istio install-postgres
