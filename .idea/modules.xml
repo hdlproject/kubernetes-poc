@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/istio-poc.iml" filepath="$PROJECT_DIR$/.idea/istio-poc.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/kubernetes-poc.iml" filepath="$PROJECT_DIR$/.idea/kubernetes-poc.iml" />
     </modules>
   </component>
 </project>
