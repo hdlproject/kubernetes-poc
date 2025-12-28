@@ -15,10 +15,10 @@ Here are some components involved in this project:
 All the functionalities this repository has are delivered by the `Makefile`.
 Here are the list:
 
-- `build-docker`: build the Docker image of a service.
+- `build-service-docker`: build the Docker image of a service.
   The `Dockerfile` of a service is built using [this template](service/Dockerfile).
   The result is placed on `build` dir under each service dir.
-- `build-kubernetes`: construct Kubernetes manifests needed for the deployment of a service and deploy all of them on
+- `build-service-kube`: construct Kubernetes manifests needed for the deployment of a service and deploy all of them on
   Kubernetes.
   The `deployment.yaml` and `service.yaml` of a service are built using [this template](k8s/deployment.yaml)
   and [this template](k8s/service.yaml) respectively.
@@ -34,5 +34,5 @@ Here are the list:
 - `setup-kubernetes`: setup all tools needed to run a Kubernetes cluster (e.g. Minikube).
 - `install-argocd`: deploy ArgoCD to Kubernetes cluster and install the needed client to interact with it.
 - `setup-argocd-client`: setup necessary config and authentication to communicate with the deployed ArgoCD.
-- `build-argocd`: create an ArgoCD app for a service and do sync with the latest code from GitHub.
-- `build-all-service`: do `build-kubernetes` and `build-argocd` on all services.
+- `build-service-argocd`: create an ArgoCD app for a service and do sync with the latest code from GitHub.
+- `build-all-service`: do `build-service-kube` and `build-service-argocd` on all services.

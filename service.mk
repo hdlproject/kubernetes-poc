@@ -1,5 +1,5 @@
-.PHONY: build-docker
-build-docker:
+.PHONY: build-service-docker
+build-service-docker:
 	@if [ ! -d ./build ]; then mkdir ./build; fi
 
 	@cp -r ./.env ./build/.env
@@ -14,8 +14,8 @@ build-docker:
 	@sed -i '' -e 's#appname#$(APP_NAME)#g' ./build/Dockerfile
 	@docker buildx build -f ./build/Dockerfile -t $(APP_IMAGE_NAME) --output=type=docker ./build
 
-.PHONY: build-kubernetes
-build-kubernetes: build-docker
+.PHONY: build-service-kube
+build-service-kube: build-service-docker
 	@cp -r ../../k8s/deployment.yaml ./build/deployment.yaml
 	@sed -i '' -e 's#appname#$(APP_NAME)#g' ./build/deployment.yaml
 	@chmod +x ../../script/convert-dotenv-to-kube-env.sh && ../../script/convert-dotenv-to-kube-env.sh ./build/.env ./build/deployment.yaml
@@ -37,8 +37,13 @@ build-kubernetes: build-docker
 		kubectl apply -f ./build/istio.yaml; \
 	fi
 
-.PHONY: build-argocd
-build-argocd:
+.PHONY: remove-service-kube
+remove-service-kube:
+	@kubectl delete -f ./build/deployment.yaml
+	@kubectl delete -f ./build/service.yaml
+
+.PHONY: build-service-argocd
+build-service-argocd:
 	@kubectl config set-context --current --namespace=argocd && \
 		argocd app create --upsert $(APP_NAME) --repo https://github.com/hdlproject/kubernetes-poc.git --path service/$(APP_NAME)/build --dest-server https://kubernetes.default.svc --dest-namespace default && \
 		argocd app sync $(APP_NAME)

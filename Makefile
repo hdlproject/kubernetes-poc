@@ -6,15 +6,21 @@ include $(ROOT)/service.mk
 
 .PHONY: build-all-service
 build-all-service:
-#	@make -C ./service/gateway build-kubernetes istiosidecar="true"
-#	@make -C ./service/transaction build-kubernetes istiosidecar="true"
-#	@make -C ./service/user build-kubernetes istiosidecar="true"
-#	@make -C ./service/external build-kubernetes istiosidecar="false"
+#	@make -C ./service/gateway build-service-kube istiosidecar="true"
+#	@make -C ./service/transaction build-service-kube istiosidecar="true"
+#	@make -C ./service/user build-service-kube istiosidecar="true"
+#	@make -C ./service/external build-service-kube istiosidecar="false"
+	@make -C ./service/gateway build-service-argocd
+	@make -C ./service/transaction build-service-argocd
+	@make -C ./service/user build-service-argocd
+	@make -C ./service/external build-service-argocd
 
-	@make -C ./service/gateway build-argocd
-#	@make -C ./service/transaction build-argocd
-#	@make -C ./service/user build-argocd
-#	@make -C ./service/external build-argocd
+.PHONY: remove-all-service
+remove-all-service:
+	@make -C ./service/gateway remove-service-kube istiosidecar="true"
+	@make -C ./service/transaction remove-service-kube istiosidecar="true"
+	@make -C ./service/user remove-service-kube istiosidecar="true"
+	@make -C ./service/external remove-service-kube istiosidecar="false"
 
 .PHONY: setup-kubernetes
 setup-kubernetes: start-kube-cluster install-istio install-postgres install-argocd
