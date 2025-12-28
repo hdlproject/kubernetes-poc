@@ -25,4 +25,5 @@ go.work.sum
 .env
 
 # Ignore all build directories under services (e.g., external, gateway, etc.)
-**/build/**
+# Comment if you need files inside build dir for argocd
+#**/build/**
