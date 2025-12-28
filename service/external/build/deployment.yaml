@@ -2,10 +2,10 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    name: appname
-    app: appname
+    name: external
+    app: external
     namespace: default
-  name: appname
+  name: external
   namespace: default
 spec:
   strategy:
@@ -13,20 +13,20 @@ spec:
   progressDeadlineSeconds: 300
   selector:
     matchLabels:
-      app: appname
+      app: external
   template:
     metadata:
       labels:
-        name: appname
-        app: appname
+        name: external
+        app: external
         namespace: default
       annotations:
-        sidecar.istio.io/inject: "istiosidecarval"
+        sidecar.istio.io/inject: "false"
     spec:
       containers:
-        - image: docker.io/kubernetes-poc/appname
+        - image: docker.io/kubernetes-poc/external
           imagePullPolicy: IfNotPresent
-          name: appname
+          name: external
           ports:
             - name: http
               containerPort: 8000
@@ -55,3 +55,8 @@ spec:
             requests:
               cpu: 300m
               memory: 300Mi
+          env:
+            - name: APPNAME
+              value: external
+            - name: UPSTREAMS
+              value: 

@@ -1,0 +1,32 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: transaction
+  namespace: default
+spec:
+  hosts:
+    - transaction.default.svc.cluster.local
+  http:
+    - match:
+        - port: 8000
+      route:
+        - destination:
+            host: transaction.default.svc.cluster.local
+            port:
+              number: 8000
+      retries:
+        attempts: 3
+        perTryTimeout: 2s
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: transaction
+spec:
+  host: transaction.default.svc.cluster.local
+  trafficPolicy:
+    connectionPool:
+      tcp:
+        maxConnections: 3
+      http:
+        maxRequestsPerConnection: 10

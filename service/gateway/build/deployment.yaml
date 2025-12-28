@@ -2,10 +2,10 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    name: appname
-    app: appname
+    name: gateway
+    app: gateway
     namespace: default
-  name: appname
+  name: gateway
   namespace: default
 spec:
   strategy:
@@ -13,20 +13,20 @@ spec:
   progressDeadlineSeconds: 300
   selector:
     matchLabels:
-      app: appname
+      app: gateway
   template:
     metadata:
       labels:
-        name: appname
-        app: appname
+        name: gateway
+        app: gateway
         namespace: default
       annotations:
-        sidecar.istio.io/inject: "istiosidecarval"
+        sidecar.istio.io/inject: "true"
     spec:
       containers:
-        - image: docker.io/kubernetes-poc/appname
+        - image: docker.io/kubernetes-poc/gateway
           imagePullPolicy: IfNotPresent
-          name: appname
+          name: gateway
           ports:
             - name: http
               containerPort: 8000
@@ -55,3 +55,8 @@ spec:
             requests:
               cpu: 300m
               memory: 300Mi
+          env:
+            - name: APPNAME
+              value: gateway
+            - name: UPSTREAMS
+              value: http://user:8000,http://transaction:8000
