@@ -36,3 +36,15 @@ Here are the list:
 - `setup-argocd-client`: setup necessary config and authentication to communicate with the deployed ArgoCD.
 - `build-service-argocd`: create an ArgoCD app for a service and do sync with the latest code from GitHub.
 - `build-all-service`: do `build-service-kube` and `build-service-argocd` on all services.
+
+## How to Test
+- make an HTTP call to the gatway service
+  ```bash
+    curl -X GET "http://localhost:8001/info"
+  ```
+  expected response:
+  ```text
+    gateway user transaction external
+  ```
+  expected service map in kiali:
+  ![kiali-service-map.png](kiali-service-map.png)

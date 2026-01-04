@@ -28,8 +28,9 @@ build-service-kube: build-service-docker
 
 	@minikube -p poc image load --overwrite=true $(APP_IMAGE_NAME)
 
-	@kubectl apply -f ./build/deployment.yaml
-	@kubectl apply -f ./build/service.yaml
+	# Uncomment if not using argocd
+#	@kubectl apply -f ./build/deployment.yaml
+#	@kubectl apply -f ./build/service.yaml
 
 	@if [ $(istiosidecar) = "true" ]; then \
 		cp -r ../../k8s/istio.yaml ./build/istio.yaml; \

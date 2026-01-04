@@ -22,5 +22,9 @@ remove-all-service:
 	@make -C ./service/user remove-service-kube istiosidecar="true"
 	@make -C ./service/external remove-service-kube istiosidecar="false"
 
+.PHONY: expose-service
+expose-service:
+	@kubectl port-forward svc/gateway 8001:8000
+
 .PHONY: setup-kubernetes
 setup-kubernetes: start-kube-cluster install-istio install-postgres install-argocd

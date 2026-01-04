@@ -14,6 +14,8 @@ install-istio:
 	@kubectl apply -f ./k8s/kiali.yaml
 	@kubectl apply -f ./k8s/prometheus.yaml
 
+	@kubectl label namespace default istio.io/rev=default --overwrite
+
 .PHONY: install-argocd
 install-argocd:
 	# install argocd
@@ -38,4 +40,8 @@ setup-argocd-client:
 
 .PHONY: expose-argocd-server
 expose-argocd-server:
-	@kubectl port-forward svc/argocd-server 8888:80
+	@kubectl -n argocd port-forward svc/argocd-server 8080:80
+
+.PHONY: expose-kiali
+expose-kiali:
+	@kubectl -n istio-system port-forward svc/kiali 20001:20001
