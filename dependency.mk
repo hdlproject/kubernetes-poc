@@ -10,11 +10,23 @@ install-istio:
 
 	@helm upgrade istio-base istio/base -n istio-system --install --set defaultRevision=default --create-namespace
 	@helm upgrade istiod istio/istiod -n istio-system --install --wait
+	@helm upgrade istio-ingressgateway istio/gateway -n istio-system --install
 
+	@kubectl label namespace default istio-injection=enabled --overwrite
+
+.PHONY: install-istio-istioctl
+install-istio-istioctl:
+	@bash istioctl-install.sh
+
+	@kubectl label namespace default istio-injection=enabled --overwrite
+
+.PHONY: install-kiali
+install-kiali:
 	@kubectl apply -f ./k8s/kiali.yaml
-	@kubectl apply -f ./k8s/prometheus.yaml
 
-	@kubectl label namespace default istio.io/rev=default --overwrite
+.PHONY: install-prometheus
+install-prometheus:
+	@kubectl apply -f ./k8s/prometheus.yaml
 
 .PHONY: install-argocd
 install-argocd:
@@ -40,7 +52,7 @@ setup-argocd-client:
 
 .PHONY: expose-argocd-server
 expose-argocd-server:
-	@kubectl -n argocd port-forward svc/argocd-server 8080:80
+	@kubectl -n argocd port-forward svc/argocd-server 8888:80
 
 .PHONY: expose-kiali
 expose-kiali:
