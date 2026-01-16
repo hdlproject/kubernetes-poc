@@ -29,7 +29,7 @@ Here are the list:
   If the `istiosidecar` flag is set, an Istio virtual service will be generated using [this template](k8s/istio.yaml)
   for that service.
 - `install-postgres`: deploy PostgreSQL on Kubernetes using the Helm chart.
-- `install-istio`: deploy Istio on Kubernetes using the helm chart.
+- `install-istio-helm`: deploy Istio on Kubernetes using the helm chart.
   This includes the installation of the Istio-related tools such as Kiali and Prometheus.
 - `setup-kubernetes`: setup all tools needed to run a Kubernetes cluster (e.g. Minikube).
 - `install-argocd`: deploy ArgoCD to Kubernetes cluster and install the needed client to interact with it.

@@ -23,6 +23,7 @@ spec:
       annotations:
         sidecar.istio.io/inject: "true"
     spec:
+      serviceAccountName: gateway-sa
       containers:
         - image: docker.io/kubernetes-poc/gateway
           imagePullPolicy: IfNotPresent
@@ -60,3 +61,9 @@ spec:
               value: gateway
             - name: UPSTREAMS
               value: http://user:8000,http://transaction:8000
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: gateway-sa
+  namespace: default

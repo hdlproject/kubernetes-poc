@@ -23,6 +23,7 @@ spec:
       annotations:
         sidecar.istio.io/inject: "true"
     spec:
+      serviceAccountName: user-sa
       containers:
         - image: docker.io/kubernetes-poc/user
           imagePullPolicy: IfNotPresent
@@ -60,3 +61,9 @@ spec:
               value: user
             - name: UPSTREAMS
               value: 
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: user-sa
+  namespace: default

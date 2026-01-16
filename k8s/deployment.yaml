@@ -23,6 +23,7 @@ spec:
       annotations:
         sidecar.istio.io/inject: "istiosidecarval"
     spec:
+      serviceAccountName: appname-sa
       containers:
         - image: docker.io/kubernetes-poc/appname
           imagePullPolicy: IfNotPresent
@@ -55,3 +56,10 @@ spec:
             requests:
               cpu: 300m
               memory: 300Mi
+          env_here
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: appname-sa
+  namespace: default

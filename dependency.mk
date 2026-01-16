@@ -3,8 +3,8 @@ install-postgres:
 	@helm repo add bitnami https://charts.bitnami.com/bitnami
 	@helm upgrade postgresql bitnami/postgresql --install -f ./k8s/postgresql-config.yaml
 
-.PHONY: install-istio
-install-istio:
+.PHONY: install-istio-helm
+install-istio-helm:
 	@helm repo add istio https://istio-release.storage.googleapis.com/charts
 	@helm repo update
 
@@ -57,3 +57,7 @@ expose-argocd-server:
 .PHONY: expose-kiali
 expose-kiali:
 	@kubectl -n istio-system port-forward svc/kiali 20001:20001
+
+.PHONY: expose-ingress-gateway
+expose-ingress-gateway:
+	@kubectl -n istio-system port-forward svc/istio-ingressgateway 8080:80 8443:443

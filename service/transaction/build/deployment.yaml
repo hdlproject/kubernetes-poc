@@ -23,6 +23,7 @@ spec:
       annotations:
         sidecar.istio.io/inject: "true"
     spec:
+      serviceAccountName: transaction-sa
       containers:
         - image: docker.io/kubernetes-poc/transaction
           imagePullPolicy: IfNotPresent
@@ -62,3 +63,9 @@ spec:
               value: http://external:8000
             - name: DATABASE
               value: transaction
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: transaction-sa
+  namespace: default
