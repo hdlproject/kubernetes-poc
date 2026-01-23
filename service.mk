@@ -35,7 +35,11 @@ build-service-kube: build-service-docker
 	@if [ $(istiosidecar) = "true" ]; then \
 		cp -r ../../k8s/istio.yaml ./build/istio.yaml; \
 		sed -i '' -e 's#appname#$(APP_NAME)#g' ./build/istio.yaml; \
-		kubectl apply -f ./build/istio.yaml; \
+		#kubectl apply -f ./build/istio.yaml; \
+	else \
+		cp -r ../../k8s/service-entry.yaml ./build/service-entry.yaml; \
+		sed -i '' -e 's#appname#$(APP_NAME)#g' ./build/service-entry.yaml; \
+		#kubectl apply -f ./build/service-entry.yaml; \
 	fi
 
 .PHONY: remove-service-kube

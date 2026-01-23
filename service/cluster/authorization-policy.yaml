@@ -1,14 +1,15 @@
 apiVersion: security.istio.io/v1beta1
 kind: AuthorizationPolicy
 metadata:
-  name: allow-external
+  name: allow-transaction
   namespace: default
 spec:
   selector:
     matchLabels:
-      app: external
+      app: transaction
+  action: ALLOW
   rules:
     - from:
         - source:
             principals:
-              - "spiffe://cluster.local/ns/default/sa/transaction"
+              - "cluster.local/ns/default/sa/gateway-sa"
