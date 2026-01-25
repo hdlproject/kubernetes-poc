@@ -3,6 +3,7 @@ ROOT := $(shell git rev-parse --show-toplevel 2>/dev/null)
 include $(ROOT)/kubernetes.mk
 include $(ROOT)/dependency.mk
 include $(ROOT)/service.mk
+include $(ROOT)/cd.mk
 
 .PHONY: build-all-service
 build-all-service:
@@ -28,4 +29,4 @@ expose-service:
 	@kubectl port-forward svc/gateway 8001:8000
 
 .PHONY: setup-kubernetes
-setup-kubernetes: start-kube-cluster install-istio-istioctl install-kiali install-prometheus install-postgres install-argocd
+setup-kubernetes: start-kube-cluster install-istio-istioctl install-kiali install-prometheus install-postgres install-argocd setup-https
