@@ -25,7 +25,7 @@ istioctl version --remote=false
 istioctl x precheck
 
 # Install Istio (minimal)
-istioctl install --set profile=default --set values.revision=default -y
+istioctl install --set profile=default -y
 
 # Cleanup
 rm -rf "$TMP_DIR"

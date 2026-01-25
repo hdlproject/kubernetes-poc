@@ -2,11 +2,11 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    name: appname
-    app: namenoenv
-    environment: envname
+    name: transaction-uat
+    app: transaction
+    environment: uat
     namespace: default
-  name: appname
+  name: transaction-uat
   namespace: default
 spec:
   strategy:
@@ -14,22 +14,22 @@ spec:
   progressDeadlineSeconds: 300
   selector:
     matchLabels:
-      name: appname
+      name: transaction-uat
   template:
     metadata:
       labels:
-        name: appname
-        app: namenoenv
-        environment: envname
+        name: transaction-uat
+        app: transaction
+        environment: uat
         namespace: default
       annotations:
-        sidecar.istio.io/inject: "istiosidecarval"
+        sidecar.istio.io/inject: "true"
     spec:
-      serviceAccountName: namenoenv-sa
+      serviceAccountName: transaction-sa
       containers:
-        - image: docker.io/kubernetes-poc/namenoenv
+        - image: docker.io/kubernetes-poc/transaction
           imagePullPolicy: IfNotPresent
-          name: appname
+          name: transaction-uat
           ports:
             - name: http
               containerPort: 8000
@@ -58,10 +58,16 @@ spec:
             requests:
               cpu: 300m
               memory: 300Mi
-          envhere
+          env:
+            - name: APPNAME
+              value: transaction
+            - name: UPSTREAMS
+              value: http://external:8000
+            - name: DATABASE
+              value: transaction
 ---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: namenoenv-sa
+  name: transaction-sa
   namespace: default

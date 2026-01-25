@@ -2,10 +2,11 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    name: external
-    app: external
+    name: gateway-prod
+    app: gateway
+    environment: prod
     namespace: default
-  name: external
+  name: gateway-prod
   namespace: default
 spec:
   strategy:
@@ -13,21 +14,22 @@ spec:
   progressDeadlineSeconds: 300
   selector:
     matchLabels:
-      app: external
+      name: gateway-prod
   template:
     metadata:
       labels:
-        name: external
-        app: external
+        name: gateway-prod
+        app: gateway
+        environment: prod
         namespace: default
       annotations:
-        sidecar.istio.io/inject: "false"
+        sidecar.istio.io/inject: "true"
     spec:
-      serviceAccountName: external-sa
+      serviceAccountName: gateway-sa
       containers:
-        - image: docker.io/kubernetes-poc/external
+        - image: docker.io/kubernetes-poc/gateway
           imagePullPolicy: IfNotPresent
-          name: external
+          name: gateway-prod
           ports:
             - name: http
               containerPort: 8000
@@ -58,12 +60,12 @@ spec:
               memory: 300Mi
           env:
             - name: APPNAME
-              value: external
+              value: gateway
             - name: UPSTREAMS
-              value: 
+              value: http://user:8000,http://transaction:8000
 ---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: external-sa
+  name: gateway-sa
   namespace: default

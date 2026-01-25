@@ -5,4 +5,10 @@ start-kube-cluster:
 	fi
 
 	## Install metrics server for HPA
-	@kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+	@minikube -p poc addons enable metrics-server
+
+	## Wait for metrics-server to be ready
+	@echo "Waiting for metrics-server to collect metrics..."
+	@kubectl wait --for=condition=ready pod -l k8s-app=metrics-server -n kube-system --timeout=120s || true
+	@sleep 30
+	@echo "Metrics-server is ready"

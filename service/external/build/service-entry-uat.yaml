@@ -1,11 +1,11 @@
 apiVersion: networking.istio.io/v1beta1
 kind: ServiceEntry
 metadata:
-  name: external-external
+  name: external-uat-external
   namespace: default
 spec:
   hosts:
-    - external.default.svc.cluster.local
+    - external-uat.default.svc.cluster.local
   location: MESH_EXTERNAL
   resolution: DNS
   ports:

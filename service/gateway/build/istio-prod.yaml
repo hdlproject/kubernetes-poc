@@ -1,17 +1,17 @@
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
-  name: transaction
+  name: gateway-prod
   namespace: default
 spec:
   hosts:
-    - transaction.default.svc.cluster.local
+    - gateway-prod.default.svc.cluster.local
   http:
     - match:
         - port: 8000
       route:
         - destination:
-            host: transaction.default.svc.cluster.local
+            host: gateway-prod.default.svc.cluster.local
             port:
               number: 8000
       retries:
@@ -21,9 +21,9 @@ spec:
 apiVersion: networking.istio.io/v1alpha3
 kind: DestinationRule
 metadata:
-  name: transaction
+  name: gateway-prod
 spec:
-  host: transaction.default.svc.cluster.local
+  host: gateway-prod.default.svc.cluster.local
   trafficPolicy:
     connectionPool:
       tcp:

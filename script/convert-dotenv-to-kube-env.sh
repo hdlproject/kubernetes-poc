@@ -2,7 +2,7 @@
 
 ENV_FILE="$1"
 DEPLOY_FILE="$2"
-PLACEHOLDER="env_here"
+PLACEHOLDER="envhere"
 
 TMP_ENV_BLOCK="$(mktemp)"
 

@@ -2,10 +2,11 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    name: user
+    name: user-uat
     app: user
+    environment: uat
     namespace: default
-  name: user
+  name: user-uat
   namespace: default
 spec:
   strategy:
@@ -13,12 +14,13 @@ spec:
   progressDeadlineSeconds: 300
   selector:
     matchLabels:
-      app: user
+      name: user-uat
   template:
     metadata:
       labels:
-        name: user
+        name: user-uat
         app: user
+        environment: uat
         namespace: default
       annotations:
         sidecar.istio.io/inject: "true"
@@ -27,7 +29,7 @@ spec:
       containers:
         - image: docker.io/kubernetes-poc/user
           imagePullPolicy: IfNotPresent
-          name: user
+          name: user-uat
           ports:
             - name: http
               containerPort: 8000

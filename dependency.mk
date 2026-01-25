@@ -16,7 +16,7 @@ install-istio-helm:
 
 .PHONY: install-istio-istioctl
 install-istio-istioctl:
-	@bash istioctl-install.sh
+	@bash script/istioctl-install.sh
 
 	@kubectl label namespace default istio-injection=enabled --overwrite
 
@@ -30,7 +30,6 @@ install-prometheus:
 
 .PHONY: install-argocd
 install-argocd:
-	# install argocd
 ifeq (1,$(shell kubectl get namespace argocd >/dev/null 2>&1; echo $$?))
 	@kubectl create namespace argocd
 endif
