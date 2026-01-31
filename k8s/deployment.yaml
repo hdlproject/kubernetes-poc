@@ -27,7 +27,7 @@ spec:
     spec:
       serviceAccountName: namenoenv-sa
       containers:
-        - image: docker.io/kubernetes-poc/namenoenv
+        - image: docker.io/kubernetes-poc/namenoenv:envname
           imagePullPolicy: IfNotPresent
           name: appname
           ports:

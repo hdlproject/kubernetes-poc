@@ -12,3 +12,7 @@ start-kube-cluster:
 	@kubectl wait --for=condition=ready pod -l k8s-app=metrics-server -n kube-system --timeout=120s || true
 	@sleep 30
 	@echo "Metrics-server is ready"
+
+.PHONY: setup-https
+setup-https:
+	@bash script/setup-https.sh

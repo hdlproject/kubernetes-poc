@@ -27,7 +27,7 @@ spec:
     spec:
       serviceAccountName: external-sa
       containers:
-        - image: docker.io/kubernetes-poc/external
+        - image: docker.io/kubernetes-poc/external:uat
           imagePullPolicy: IfNotPresent
           name: external-uat
           ports:
@@ -60,7 +60,7 @@ spec:
               memory: 300Mi
           env:
             - name: APPNAME
-              value: external
+              value: external-uat
             - name: UPSTREAMS
               value: 
 ---

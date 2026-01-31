@@ -1,29 +1,31 @@
 .PHONY: build-service-docker
 build-service-docker:
-	@if [ ! -d ./build ]; then mkdir ./build; fi
-
-	@cp -r ./.env ./build/.env
-
-	@cp -r ../main.go ./build/main.go
-
-	@cp -r ../go.mod ./build/go.mod
-	@cp -r ../go.sum ./build/go.sum
-	@cd ./build && go mod tidy
-
-	@cp -r ../Dockerfile ./build/Dockerfile
-	@sed -i '' -e 's#appname#$(APP_NAME)#g' ./build/Dockerfile
-	@docker buildx build -f ./build/Dockerfile -t $(APP_IMAGE_NAME) --output=type=docker ./build
+	@for env in $(environment); do \
+		if [ ! -d ./build ]; then mkdir ./build; fi; \
+		\
+		cp -r ./.env.$$env ./build/.env.$$env; \
+		\
+		cp -r ../main.go ./build/main.go; \
+		\
+		cp -r ../go.mod ./build/go.mod; \
+		cp -r ../go.sum ./build/go.sum; \
+		cd ./build && go mod tidy && cd ..; \
+		\
+		cp -r ../Dockerfile ./build/Dockerfile; \
+		sed -i '' -e 's#appname#$(APP_NAME)#g' ./build/Dockerfile; \
+		docker buildx build -f ./build/Dockerfile -t $(APP_IMAGE_NAME):$$env --output=type=docker ./build; \
+	done
 
 .PHONY: build-service-kube
 build-service-kube: build-service-docker
-	@minikube -p poc image load --overwrite=true $(APP_IMAGE_NAME)
-
 	@for env in $(environment); do \
+		minikube -p poc image load --overwrite=true $(APP_IMAGE_NAME):$$env; \
+		\
 		cp -r ../../k8s/deployment.yaml ./build/deployment-$$env.yaml; \
 		sed -i '' -e "s#appname#$(APP_NAME)-$$env#g" ./build/deployment-$$env.yaml; \
 		sed -i '' -e "s#namenoenv#$(APP_NAME)#g" ./build/deployment-$$env.yaml; \
 		sed -i '' -e "s#envname#$$env#g" ./build/deployment-$$env.yaml; \
-		chmod +x ../../script/convert-dotenv-to-kube-env.sh && ../../script/convert-dotenv-to-kube-env.sh ./build/.env ./build/deployment-$$env.yaml; \
+		chmod +x ../../script/convert-dotenv-to-kube-env.sh && ../../script/convert-dotenv-to-kube-env.sh ./build/.env.$$env ./build/deployment-$$env.yaml; \
 		sed -i '' -e 's#istiosidecarval#$(istiosidecar)#g' ./build/deployment-$$env.yaml; \
 		\
 		cp -r ../../k8s/service.yaml ./build/service-$$env.yaml; \

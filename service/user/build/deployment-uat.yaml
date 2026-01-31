@@ -27,7 +27,7 @@ spec:
     spec:
       serviceAccountName: user-sa
       containers:
-        - image: docker.io/kubernetes-poc/user
+        - image: docker.io/kubernetes-poc/user:uat
           imagePullPolicy: IfNotPresent
           name: user-uat
           ports:
@@ -60,7 +60,7 @@ spec:
               memory: 300Mi
           env:
             - name: APPNAME
-              value: user
+              value: user-uat
             - name: UPSTREAMS
               value: 
 ---

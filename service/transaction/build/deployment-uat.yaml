@@ -27,7 +27,7 @@ spec:
     spec:
       serviceAccountName: transaction-sa
       containers:
-        - image: docker.io/kubernetes-poc/transaction
+        - image: docker.io/kubernetes-poc/transaction:uat
           imagePullPolicy: IfNotPresent
           name: transaction-uat
           ports:
@@ -60,9 +60,9 @@ spec:
               memory: 300Mi
           env:
             - name: APPNAME
-              value: transaction
+              value: transaction-uat
             - name: UPSTREAMS
-              value: http://external:8000
+              value: http://external-uat:8000
             - name: DATABASE
               value: transaction
 ---

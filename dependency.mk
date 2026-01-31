@@ -28,14 +28,10 @@ install-kiali:
 install-prometheus:
 	@kubectl apply -f ./k8s/prometheus.yaml
 
-.PHONY: setup-https
-setup-https:
-	@bash script/setup-https.sh
-
 .PHONY: expose-kiali
 expose-kiali:
 	@kubectl -n istio-system port-forward svc/kiali 20001:20001
 
-.PHONY: expose-ingress-gateway
-expose-ingress-gateway:
+.PHONY: expose-istio-ingress-gateway
+expose-istio-ingress-gateway:
 	@kubectl -n istio-system port-forward svc/istio-ingressgateway 8080:80 8443:443
