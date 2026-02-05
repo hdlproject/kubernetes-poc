@@ -94,6 +94,13 @@ data:
         enabled: true
       istio:
         root_namespace: istio-system
+      prometheus:
+        url: http://kps-kube-prometheus-stack-prometheus.monitoring.svc.cluster.local:9090
+      tracing:
+        enabled: true
+        provider: jaeger
+        in_cluster_url: http://jaeger.tracing.svc.cluster.local:16685
+        use_grpc: true
     identity:
       cert_file: ""
       private_key_file: ""

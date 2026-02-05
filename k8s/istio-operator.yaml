@@ -1,0 +1,13 @@
+apiVersion: install.istio.io/v1alpha1
+kind: IstioOperator
+metadata:
+  name: istio-tracing
+  namespace: istio-system
+spec:
+  meshConfig:
+    enableTracing: true
+    extensionProviders:
+      - name: otel
+        opentelemetry:
+          service: jaeger.tracing.svc.cluster.local
+          port: 4317

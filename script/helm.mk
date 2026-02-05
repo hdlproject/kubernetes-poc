@@ -1,4 +1,4 @@
-.PHONY: install-postgres
+.PHONY: install-postgres-helm
 install-postgres:
 	@helm repo add bitnami https://charts.bitnami.com/bitnami
 	@helm upgrade postgresql bitnami/postgresql --install -f ./k8s/postgresql-config.yaml
@@ -14,24 +14,18 @@ install-istio-helm:
 
 	@kubectl label namespace default istio-injection=enabled --overwrite
 
-.PHONY: install-istio-istioctl
-install-istio-istioctl:
-	@bash script/istioctl-install.sh
+	@kubectl apply -f ./k8s/istio-operator.yaml
 
-	@kubectl label namespace default istio-injection=enabled --overwrite
+.PHONY: install-prometheus-helm
+install-prometheus-helm:
+	@helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+	@helm repo update
 
-.PHONY: install-kiali
-install-kiali:
-	@kubectl apply -f ./k8s/kiali.yaml
+	@helm install kps prometheus-community/kube-prometheus-stack -n monitoring --create-namespace
 
-.PHONY: install-prometheus
-install-prometheus:
-	@kubectl apply -f ./k8s/prometheus.yaml
+.PHONY: install-jaeger-helm
+install-jaeger-helm:
+	@helm repo add jaegertracing https://jaegertracing.github.io/helm-charts
+	@helm repo update
 
-.PHONY: expose-kiali
-expose-kiali:
-	@kubectl -n istio-system port-forward svc/kiali 20001:20001
-
-.PHONY: expose-istio-ingress-gateway
-expose-istio-ingress-gateway:
-	@kubectl -n istio-system port-forward svc/istio-ingressgateway 8080:80 8443:443
+	@helm install jaeger jaegertracing/jaeger -n tracing --create-namespace

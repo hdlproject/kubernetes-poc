@@ -18,7 +18,3 @@ setup-argocd-client:
 	# print admin password
 	@echo "admin username: admin - password:" $(shell kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d)
 	@yes | argocd login localhost:8888 --username admin --password $(shell kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d)
-
-.PHONY: expose-argocd-server
-expose-argocd-server:
-	@kubectl -n argocd port-forward svc/argocd-server 8888:80
