@@ -14,6 +14,15 @@ expose-argocd-server:
 expose-prometheus-helm:
 	@kubectl -n monitoring port-forward svc/kps-kube-prometheus-stack-prometheus 9090:9090
 
+.PHONY: expose-loki-helm
+expose-loki-helm:
+	@kubectl -n monitoring port-forward svc/loki 3100:3100
+
+.PHONY: expose-grafana-helm
+expose-grafana-helm:
+	@kubectl -n monitoring get secret kps-grafana -o jsonpath="{.data.admin-password}"  | base64 --decode ; echo
+	@kubectl -n monitoring port-forward svc/kps-grafana 3080:80
+
 .PHONY: expose-jaeger-helm
 expose-jaeger-helm:
 	@kubectl -n tracing port-forward svc/jaeger 16686:16686

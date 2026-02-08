@@ -29,3 +29,13 @@ install-jaeger-helm:
 	@helm repo update
 
 	@helm install jaeger jaegertracing/jaeger -n tracing --create-namespace
+
+.PHONY: install-loki-helm
+install-loki-helm:
+	@helm repo add grafana https://grafana.github.io/helm-charts
+	@helm repo update
+
+	@helm install loki grafana/loki-stack -n monitoring
+
+	@kubectl -n monitoring patch configmap loki-loki-stack \
+       --patch-file service/cluster/loki-datasource.yaml
