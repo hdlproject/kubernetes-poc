@@ -70,7 +70,7 @@ RESPONSE=$(curl -s \
   -H "x-api-key: ${CLAUDE_API_KEY}" \
   -H "anthropic-version: 2023-06-01" \
   -H "content-type: application/json" \
-  -d @"$WORK_DIR/request.json" \
+  --data-binary "@${WORK_DIR}/request.json" \
   "https://api.anthropic.com/v1/messages")
 
 # Extract the text from the first content block
@@ -94,7 +94,7 @@ HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
   -X POST \
   -H "Authorization: Bearer ${GITHUB_TOKEN}" \
   -H "Accept: application/vnd.github.v3+json" \
-  -d @"$WORK_DIR/comment.json" \
+  --data-binary "@${WORK_DIR}/comment.json" \
   "https://api.github.com/repos/${REPO}/issues/${PR_NUMBER}/comments")
 
 if [ "$HTTP_STATUS" -ge 200 ] && [ "$HTTP_STATUS" -lt 300 ]; then
