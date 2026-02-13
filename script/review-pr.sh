@@ -60,8 +60,8 @@ jq -n \
   }' > "$WORK_DIR/request.json"
 
 echo "Request JSON size: $(wc -c < "$WORK_DIR/request.json") bytes"
-echo "Request JSON preview (first 200 chars):"
-echo "$WORK_DIR/request.json"
+echo "Request JSON content:"
+cat "$WORK_DIR/request.json"
 echo ""
 
 # ── 3. Call the Claude API ────────────────────────────────────────────
