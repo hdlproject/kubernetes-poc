@@ -40,7 +40,7 @@ type claudeResponse struct {
 }
 
 func mustEnv(key string) string {
-	v := os.Getenv(key)
+	v := strings.TrimSpace(os.Getenv(key))
 	if v == "" {
 		fmt.Fprintf(os.Stderr, "Error: %s is required\n", key)
 		os.Exit(1)
