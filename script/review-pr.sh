@@ -44,7 +44,7 @@ USER_MESSAGE=$(jq -n \
   --arg title "$PR_TITLE" \
   --arg body  "$PR_BODY" \
   --arg diff  "$DIFF" \
-  '$"PR Title: \($title)\n\nPR Description:\n\($body)\n\nDiff:\n```diff\n\($diff)\n```"')
+  '"PR Title: " + $title + "\n\nPR Description:\n" + $body + "\n\nDiff:\n```diff\n" + $diff + "\n```"')
 
 REQUEST_BODY=$(jq -n \
   --arg system "$SYSTEM_PROMPT" \
