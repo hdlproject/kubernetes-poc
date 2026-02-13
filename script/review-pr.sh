@@ -68,15 +68,12 @@ echo ""
 echo "Sending diff to Claude for review..."
 echo "Request file: $(ls -la "${WORK_DIR}/request.json")"
 echo "First byte hex: $(xxd -l 1 "${WORK_DIR}/request.json")"
-RESPONSE=$(curl -s -w "\n%{http_code}" \
+RESPONSE=$(cat "${WORK_DIR}/request.json" | curl -s \
   -H "x-api-key: ${CLAUDE_API_KEY}" \
   -H "anthropic-version: 2023-06-01" \
   -H "content-type: application/json" \
-  --data-binary "@${WORK_DIR}/request.json" \
+  -d @- \
   "https://api.anthropic.com/v1/messages")
-HTTP_CODE=$(echo "$RESPONSE" | tail -1)
-RESPONSE=$(echo "$RESPONSE" | sed '$d')
-echo "Claude API HTTP status: $HTTP_CODE"
 
 # Extract the text from the first content block
 REVIEW=$(echo "$RESPONSE" | jq -r '.content[0].text // empty')
