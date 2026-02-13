@@ -11,6 +11,8 @@ PR_TITLE="${PR_TITLE:-}"
 PR_BODY="${PR_BODY:-}"
 
 MAX_DIFF_CHARS=90000
+TMPDIR=$(mktemp -d)
+trap 'rm -rf "$TMPDIR"' EXIT
 
 # ── 1. Fetch the PR diff ─────────────────────────────────────────────
 echo "Fetching diff for PR #${PR_NUMBER} in ${REPO}..."
@@ -39,24 +41,23 @@ if [ ! -f "$SKILL_FILE" ]; then
 fi
 SYSTEM_PROMPT=$(cat "$SKILL_FILE")
 
-# Safely encode the user message as JSON
-USER_MESSAGE=$(jq -n \
-  --arg title "$PR_TITLE" \
-  --arg body  "$PR_BODY" \
-  --arg diff  "$DIFF" \
-  '"PR Title: " + $title + "\n\nPR Description:\n" + $body + "\n\nDiff:\n```diff\n" + $diff + "\n```"')
-
-REQUEST_BODY=$(jq -n \
+# Build request JSON via jq and write to a temp file to avoid shell quoting issues
+jq -n \
   --arg system "$SYSTEM_PROMPT" \
-  --argjson content "$USER_MESSAGE" \
+  --arg title  "$PR_TITLE" \
+  --arg body   "$PR_BODY" \
+  --arg diff   "$DIFF" \
   '{
     model: "claude-sonnet-4-5-20250929",
     max_tokens: 4096,
     system: $system,
     messages: [
-      { role: "user", content: $content }
+      {
+        role: "user",
+        content: ("PR Title: " + $title + "\n\nPR Description:\n" + $body + "\n\nDiff:\n```diff\n" + $diff + "\n```")
+      }
     ]
-  }')
+  }' > "$TMPDIR/request.json"
 
 # ── 3. Call the Claude API ────────────────────────────────────────────
 echo "Sending diff to Claude for review..."
@@ -64,7 +65,7 @@ RESPONSE=$(curl -s \
   -H "x-api-key: ${CLAUDE_API_KEY}" \
   -H "anthropic-version: 2023-06-01" \
   -H "content-type: application/json" \
-  -d "$REQUEST_BODY" \
+  -d @"$TMPDIR/request.json" \
   "https://api.anthropic.com/v1/messages")
 
 # Extract the text from the first content block
@@ -79,16 +80,16 @@ fi
 echo "Review received (${#REVIEW} chars)."
 
 # ── 4. Post the review as a PR comment ────────────────────────────────
-COMMENT_BODY=$(jq -n --arg body "## Claude Code Review
+jq -n --arg body "## Claude Code Review
 
-$REVIEW" '{ body: $body }')
+$REVIEW" '{ body: $body }' > "$TMPDIR/comment.json"
 
 echo "Posting comment to PR #${PR_NUMBER}..."
 HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
   -X POST \
   -H "Authorization: Bearer ${GITHUB_TOKEN}" \
   -H "Accept: application/vnd.github.v3+json" \
-  -d "$COMMENT_BODY" \
+  -d @"$TMPDIR/comment.json" \
   "https://api.github.com/repos/${REPO}/issues/${PR_NUMBER}/comments")
 
 if [ "$HTTP_STATUS" -ge 200 ] && [ "$HTTP_STATUS" -lt 300 ]; then
